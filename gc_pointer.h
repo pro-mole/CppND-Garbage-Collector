@@ -116,8 +116,8 @@ Pointer<T,size>::Pointer(T *t): addr(t), arraySize(size), isArray(size > 1) {
         Pointer<T, size>::refContainer.push_back(newDetails);
     }
     else {
-        PtrDetails<T>* details = &(*Pointer<T, size>::findPtrInfo(t));
-        details->refcount++;
+        PtrDetails<T> &details = *Pointer<T, size>::findPtrInfo(t);
+        details.refcount++;
     }
 }
 
@@ -129,12 +129,12 @@ Pointer<T,size>::Pointer(const Pointer &ob): Pointer(ob.addr) {
 // Destructor for Pointer.
 template <class T, int size>
 Pointer<T, size>::~Pointer(){
-    PtrDetails<T>* details = &(*Pointer<T, size>::findPtrInfo(this->addr));
-    details->refcount--;
+    PtrDetails<T> &details = *Pointer<T, size>::findPtrInfo(this->addr);
+    details.refcount--;
 
-    if (details->refcount == 0) {
+    if (details.refcount == 0) {
         this->collect();
-        Pointer<T, size>::refContainer.remove(*details);
+        Pointer<T, size>::refContainer.remove(details);
     }
 }
 

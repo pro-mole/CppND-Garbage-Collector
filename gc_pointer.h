@@ -100,23 +100,30 @@ bool Pointer<T, size>::first = true;
 
 // Constructor for both initialized and uninitialized objects. -> see class interface
 template<class T,int size>
-Pointer<T,size>::Pointer(T *t){
+Pointer<T,size>::Pointer(T *t): addr(t), arraySize(size), isArray(size > 1) {
     // Register shutdown() as an exit function.
     if (first)
         atexit(shutdown);
     first = false;
 
-    // TODO: Implement Pointer constructor
-    // Lab: Smart Pointer Project Lab
-
+    if (Pointer<T, size>::findPtrInfo(t) == Pointer<T, size>::refContainer.end()) {
+        PtrDetails<T> newDetails;
+        newDetails.refcount = 1;
+        newDetails.memPtr = t;
+        newDetails.isArray = this->isArray;
+        newDetails.arraySize = this->arraySize;
+    
+        Pointer<T, size>::refContainer.push_back(newDetails);
+    }
+    else {
+        PtrDetails<T>* details = &(*Pointer<T, size>::findPtrInfo(t));
+        details->refcount++;
+    }
 }
+
 // Copy constructor.
 template< class T, int size>
-Pointer<T,size>::Pointer(const Pointer &ob){
-
-    // TODO: Implement Pointer constructor
-    // Lab: Smart Pointer Project Lab
-
+Pointer<T,size>::Pointer(const Pointer &ob): Pointer(ob.addr) {
 }
 
 // Destructor for Pointer.

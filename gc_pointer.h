@@ -100,7 +100,7 @@ bool Pointer<T, size>::first = true;
 
 // Constructor for both initialized and uninitialized objects. -> see class interface
 template<class T,int size>
-Pointer<T,size>::Pointer(T *t): addr(t), arraySize(size), isArray(size > 1) {
+Pointer<T,size>::Pointer(T *t): addr(t), isArray(size > 1), arraySize(size) {
     // Register shutdown() as an exit function.
     if (first)
         atexit(shutdown);
@@ -184,6 +184,8 @@ T *Pointer<T, size>::operator=(T *t){
     if (oldDetails.refcount == 0) {
         this->collect();
     }
+
+    return t;
 }
 // Overload assignment of Pointer to Pointer.
 template <class T, int size>
@@ -199,6 +201,8 @@ Pointer<T, size> &Pointer<T, size>::operator=(Pointer &rv){
     if (oldDetails.refcount == 0) {
         this->collect();
     }
+
+    return rv;
 }
 
 // A utility function that displays refContainer.

@@ -147,7 +147,8 @@ bool Pointer<T, size>::collect(){
     typename std::list<PtrDetails<T> >::iterator i;
     for (i = refContainer.begin(); i != refContainer.end(); i++) {
         if (i->refcount == 0) {
-            delete i->memPtr;
+            if (i->isArray) delete[] i->memPtr;
+            else delete i->memPtr;
             collected++;
         }
     }

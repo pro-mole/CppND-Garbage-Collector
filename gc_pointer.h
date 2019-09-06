@@ -129,9 +129,13 @@ Pointer<T,size>::Pointer(const Pointer &ob): Pointer(ob.addr) {
 // Destructor for Pointer.
 template <class T, int size>
 Pointer<T, size>::~Pointer(){
+    PtrDetails<T>* details = &(*Pointer<T, size>::findPtrInfo(this->addr));
+    details->refcount--;
 
-    // TODO: Implement Pointer destructor
-    // Lab: New and Delete Project Lab
+    if (details->refcount == 0) {
+        this->collect();
+        Pointer<T, size>::refContainer.remove(*details);
+    }
 }
 
 // Collect garbage. Returns true if at least

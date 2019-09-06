@@ -134,7 +134,6 @@ Pointer<T, size>::~Pointer(){
 
     if (details.refcount == 0) {
         this->collect();
-        Pointer<T, size>::refContainer.remove(details);
     }
 }
 
@@ -149,6 +148,10 @@ bool Pointer<T, size>::collect(){
         if (i->refcount == 0) {
             if (i->isArray) delete[] i->memPtr;
             else delete i->memPtr;
+            
+            //Remove and then step to the next item
+            Pointer<T, size>::refContainer.erase(i++);
+            
             collected++;
         }
     }

@@ -160,17 +160,42 @@ bool Pointer<T, size>::collect(){
 template <class T, int size>
 T *Pointer<T, size>::operator=(T *t){
 
-    // TODO: Implement operator==
-    // LAB: Smart Pointer Project Lab
+    PtrDetails<T>& oldDetails = *Pointer<T, size>::findPtrInfo(this->addr);
+    oldDetails.refcount--;
 
+    this->addr = t;
+    if (Pointer<T, size>::findPtrInfo(t) == Pointer<T, size>::refContainer.end()) {
+        PtrDetails<T> newDetails;
+        newDetails.refcount = 1;
+        newDetails.memPtr = t;
+        newDetails.isArray = this->isArray;
+        newDetails.arraySize = this->arraySize;
+    
+        Pointer<T, size>::refContainer.push_back(newDetails);
+    }
+    else {
+        PtrDetails<T>& newDetails = *Pointer<T, size>::findPtrInfo(t);
+        newDetails.refcount++;
+    }
+
+    if (oldDetails.refcount == 0) {
+        this->collect();
+    }
 }
 // Overload assignment of Pointer to Pointer.
 template <class T, int size>
 Pointer<T, size> &Pointer<T, size>::operator=(Pointer &rv){
 
-    // TODO: Implement operator==
-    // LAB: Smart Pointer Project Lab
+    PtrDetails<T>& oldDetails = *Pointer<T, size>::findPtrInfo(this->addr);
+    oldDetails.refcount--;
 
+    this->addr = rv->addr;
+    PtrDetails<T>& newDetails = *Pointer<T, size>::findPtrInfo(rv.addr);
+    newDetails.refcount++;
+    
+    if (oldDetails.refcount == 0) {
+        this->collect();
+    }
 }
 
 // A utility function that displays refContainer.
